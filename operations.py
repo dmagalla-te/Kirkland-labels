@@ -34,9 +34,7 @@ def read_files(directory_path:str, label_name:str):
 
     return label_to_agents
 
-def agents_to_dict(all_agents:dict):
-
-    agents_name_id = {}
+def agents_to_dict(all_agents:dict, agents_name_id:dict):
 
     if "endpointAgents" in all_agents:
 
@@ -62,7 +60,7 @@ def labels_to_dict(all_labels:dict):
 
     return labels_name_id
 
-def add_agents(headers:dict, labels_to_agents:dict , account_group:str= "ProServ Enablement"):
+def add_agents(headers:dict, labels_to_agents:dict , account_group:str= "Kirkland - Production"):
     
     agent = {}
 
@@ -77,13 +75,26 @@ def add_agents(headers:dict, labels_to_agents:dict , account_group:str= "ProServ
     
 
     #Obtenemos todos los agentes de ese account group para sacar su agentId
+    agents_name_id = {}
+
     agents_url = "https://api.thousandeyes.com/v6/endpoint-agents.json"
     _, all_agents = get_data(headers, agents_url, params={"aid": aid})
 
+    pagination = 1
+    
+    while pagination == 1:
 
-    #Con esto tenemos que hacer un diccionario de {Agent_name:agent_id }
-    agents_user_agentid = agents_to_dict(all_agents) # <----- aqui la condicion cambia!!! en vez de regresar nombres:agent_id regresaremos: users:agent_is
+        #Con esto tenemos que hacer un diccionario de {Agent_name:agent_id }
+        agents_user_agentid = agents_to_dict(all_agents, agents_name_id) # <----- aqui la condicion cambia!!! en vez de regresar nombres:agent_id regresaremos: users:agent_is
 
+        if "next" in all_agents["pages"]:
+
+            url = all_agents["pages"]["next"]
+            _, all_agents = get_data(headers, url, params={})
+        
+        else:
+
+            pagination = 0
 
     #hacemos lo mismo para los labels
     #ya que tenemos los agent IDs buscamos la info del label
