@@ -1,0 +1,8 @@
+#######################################################
+#                                                     #
+#   ThousandEyes Agent Label Assignment Automation    #
+#                                                     #
+#   Automates assigning agents to labels in           #
+#   ThousandEyes based on information from CSV files  #
+#                                                     #
+#######################################################
